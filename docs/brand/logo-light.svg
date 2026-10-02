@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 96" role="img" aria-label="AI Incident Commander">
+  <defs>
+    <linearGradient id="g" x1="10" y1="3" x2="54" y2="61" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset=".52" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#a855f7"/>
+    </linearGradient>
+    <linearGradient id="h" x1="7" y1="3" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(4 12) scale(1.12)">
+    <path d="M32 3 7 12.2v17.6C7 45.4 17.6 56.6 32 61c14.4-4.4 25-15.6 25-31.2V12.2L32 3z" fill="url(#g)"/>
+    <path d="M32 3 7 12.2v17.6c0 6.2 1.7 11.7 4.7 16.3L32 6.3V3z" fill="url(#h)"/>
+    <path d="M14.5 33.5h8.2l4.3-9.6 6.3 17.4 4.9-11.1 2.9 3.3h8.4" fill="none" stroke="#fff" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="92" y="44" font-family="-apple-system, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" letter-spacing="3.2" fill="#4f46e5">AI</text>
+  <text x="90" y="76" font-family="-apple-system, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="34" font-weight="800" letter-spacing="-0.6" fill="#0f172a">Incident Commander</text>
+</svg>

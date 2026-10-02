@@ -1,0 +1,10 @@
+public/images/
+public/brand/
+public/media/
+app/icon.svg
+app/favicon.ico
+app/apple-icon.png
+out/
+.vercel/
+.vercel
+.env*

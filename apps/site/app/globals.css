@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+@theme {
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 90rem;
+  --color-ink: #050816;
+  --color-night: #0a0f2e;
+  --color-panel: #111a3a;
+  --color-line: rgb(165 180 252 / 0.22);
+  --color-soft: #cbd5e1;
+  --color-muted: #94a3b8;
+  --color-cyan: #22d3ee;
+  --color-indigo: #6366f1;
+  --color-violet: #a855f7;
+  --font-sans: -apple-system, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--color-ink);
+  color-scheme: dark;
+}
+body {
+  background:
+    radial-gradient(1100px 600px at 10% -5%, rgb(59 130 246 / 0.22), transparent 60%),
+    radial-gradient(900px 600px at 95% 10%, rgb(168 85 247 / 0.18), transparent 60%),
+    linear-gradient(180deg, #050816 0%, #0a0f2e 45%, #070a1c 100%);
+  color: #f8fafc;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+:focus-visible {
+  outline: 3px solid #fde047;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.grad-text {
+  background: linear-gradient(90deg, #67e8f9, #a78bfa 55%, #f0abfc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.glass {
+  background: linear-gradient(160deg, rgb(30 41 82 / 0.75), rgb(17 24 52 / 0.75));
+  border: 1px solid rgb(165 180 252 / 0.22);
+}
+.frame {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgb(165 180 252 / 0.35);
+  box-shadow:
+    0 50px 120px -30px rgb(59 130 246 / 0.55),
+    0 25px 60px rgb(0 0 0 / 0.55);
+  background: #0f172a;
+}
+.frame-bar {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 14px;
+  background: linear-gradient(180deg, #1e293b, #172033);
+  border-bottom: 1px solid rgb(148 163 184 / 0.25);
+}
+.frame-bar i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: block;
+}
+.tilt {
+  transform: perspective(2000px) rotateY(-7deg) rotateX(4deg);
+  transition: transform 0.6s ease;
+}
+.tilt:hover {
+  transform: perspective(2000px) rotateY(-2deg) rotateX(1deg);
+}
+.grid-floor {
+  position: absolute;
+  inset: auto -20% -40% -20%;
+  height: 70%;
+  background-image:
+    linear-gradient(rgb(129 140 248 / 0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(129 140 248 / 0.18) 1px, transparent 1px);
+  background-size: 64px 64px;
+  transform: perspective(700px) rotateX(70deg);
+  mask-image: linear-gradient(180deg, transparent, #000 40%, transparent);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .grid-floor {
+    animation: floor 18s linear infinite;
+  }
+  .float {
+    animation: float 7s ease-in-out infinite;
+  }
+}
+@keyframes floor {
+  to {
+    background-position: 0 64px;
+  }
+}
+@keyframes float {
+  50% {
+    transform: translateY(-10px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .tilt,
+  .tilt:hover {
+    transform: none;
+    transition: none;
+  }
+}

@@ -1,0 +1,168 @@
+@import "tailwindcss";
+
+/* Semantic tokens (UI_DESIGN_SYSTEM.md §2). Components consume token names, never raw hex. */
+:root {
+  color-scheme: light;
+  --canvas: #f8fafc;
+  --surface: #ffffff;
+  --surface-subtle: #f1f5f9;
+  --surface-hover: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #526078;
+  --border-subtle: #cbd5e1;
+  --border-control: #64748b;
+  --accent: #1d4ed8;
+  --accent-fill: #1d4ed8;
+  --on-accent: #ffffff;
+  --focus: #1d4ed8;
+  --danger-text: #991b1b;
+  --danger-surface: #fef2f2;
+  --warning-text: #92400e;
+  --warning-surface: #fffbeb;
+  --info-text: #1e40af;
+  --info-surface: #eff6ff;
+  --success-text: #166534;
+  --success-surface: #f0fdf4;
+  --neutral-text: #334155;
+  --neutral-surface: #f1f5f9;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --canvas: #0b1220;
+  --surface: #111c2e;
+  --surface-subtle: #19273b;
+  --surface-hover: #25354b;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border-subtle: #334155;
+  --border-control: #94a3b8;
+  --accent: #93c5fd;
+  --accent-fill: #93c5fd;
+  --on-accent: #0b1220;
+  --focus: #fde047;
+  --danger-text: #fecaca;
+  --danger-surface: #450a0a;
+  --warning-text: #fde68a;
+  --warning-surface: #451a03;
+  --info-text: #bfdbfe;
+  --info-surface: #172554;
+  --success-text: #bbf7d0;
+  --success-surface: #052e16;
+  --neutral-text: #cbd5e1;
+  --neutral-surface: #1e293b;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-surface-hover: var(--surface-hover);
+  --color-fg: var(--text-primary);
+  --color-fg-secondary: var(--text-secondary);
+  --color-fg-muted: var(--text-muted);
+  --color-line: var(--border-subtle);
+  --color-line-control: var(--border-control);
+  --color-accent: var(--accent);
+  --color-accent-fill: var(--accent-fill);
+  --color-on-accent: var(--on-accent);
+  --color-focus: var(--focus);
+  --color-danger: var(--danger-text);
+  --color-danger-surface: var(--danger-surface);
+  --color-warning: var(--warning-text);
+  --color-warning-surface: var(--warning-surface);
+  --color-info: var(--info-text);
+  --color-info-surface: var(--info-surface);
+  --color-success: var(--success-text);
+  --color-success-surface: var(--success-surface);
+  --color-neutral: var(--neutral-text);
+  --color-neutral-surface: var(--neutral-surface);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --radius-input: 6px;
+  --radius-card: 10px;
+  --radius-dialog: 12px;
+}
+
+/* Project breakpoints (RESPONSIVE_RULES.md §1): 640 / 768 / 1024 / 1440. */
+@theme {
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 90rem;
+  --breakpoint-2xl: 120rem;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Visible focus everywhere: 3 px outline, 2 px offset. */
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.page-title {
+  font-size: clamp(1.5rem, 1.1rem + 1vw, 2rem);
+  line-height: 1.2;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.prose-width {
+  max-width: 75ch;
+}
+
+.break-anywhere {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .badge,
+  .card,
+  button {
+    border: 1px solid CanvasText;
+  }
+}
+
+.skeleton {
+  background: var(--surface-subtle);
+  border-radius: 6px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .skeleton {
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.55;
+  }
+}

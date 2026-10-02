@@ -1,0 +1,160 @@
+1
+00:00:01,900 --> 00:00:05,114
+When a website breaks, real people feel it.
+
+2
+00:00:05,364 --> 00:00:06,695
+Shoppers can't pay.
+
+3
+00:00:06,945 --> 00:00:11,615
+And someone on the team has to fix it fast, often in the middle of the night.
+
+4
+00:00:12,565 --> 00:00:13,668
+That's hard.
+
+5
+00:00:13,918 --> 00:00:16,780
+The clues are spread across many different tools.
+
+6
+00:00:17,030 --> 00:00:21,838
+And some AI helpers guess, or even make changes that nobody agreed to.
+
+7
+00:00:22,788 --> 00:00:24,934
+Meet AI Incident Commander.
+
+8
+00:00:25,184 --> 00:00:27,232
+It puts everything in one place.
+
+9
+00:00:27,482 --> 00:00:32,156
+This screen shows what is broken right now, and it updates on its own.
+
+10
+00:00:33,106 --> 00:00:35,515
+Every problem shows up in one list.
+
+11
+00:00:35,765 --> 00:00:40,540
+If the same problem is reported fifty times, you only see it once.
+
+12
+00:00:40,790 --> 00:00:43,215
+The most serious ones stay at the top.
+
+13
+00:00:44,165 --> 00:00:45,699
+Bob is on call today.
+
+14
+00:00:45,949 --> 00:00:49,421
+Bob opens the checkout problem and clicks Acknowledge.
+
+15
+00:00:49,671 --> 00:00:52,102
+Now the whole team knows who is on it.
+
+16
+00:00:53,052 --> 00:00:55,449
+The AI has already done the homework.
+
+17
+00:00:55,699 --> 00:01:00,723
+It read the error messages, the recent updates, and the team's own guides.
+
+18
+00:01:00,973 --> 00:01:04,118
+It thinks a new update probably caused the problem.
+
+19
+00:01:04,368 --> 00:01:06,987
+And it shows the proof for every point.
+
+20
+00:01:07,937 --> 00:01:10,798
+Passwords and secret keys are hidden automatically.
+
+21
+00:01:11,048 --> 00:01:13,177
+Nobody sees them by accident.
+
+22
+00:01:13,427 --> 00:01:14,940
+Not even the AI.
+
+23
+00:01:15,890 --> 00:01:19,599
+The AI suggests going back to the last version that worked.
+
+24
+00:01:19,849 --> 00:01:22,168
+But the AI can't do that by itself.
+
+25
+00:01:22,418 --> 00:01:24,332
+Bob sends it as a request.
+
+26
+00:01:24,582 --> 00:01:28,338
+In this demo, fixes run on a safe practice system.
+
+27
+00:01:29,288 --> 00:01:31,674
+Now a second person must say yes.
+
+28
+00:01:31,924 --> 00:01:34,355
+The person who asked can't approve it.
+
+29
+00:01:34,605 --> 00:01:39,279
+So Carol checks the details, writes a short reason, and approves.
+
+30
+00:01:41,529 --> 00:01:45,029
+Right before the fix runs, everything is checked again.
+
+31
+00:01:45,279 --> 00:01:48,226
+Then it runs once, and only once.
+
+32
+00:01:48,476 --> 00:01:53,373
+And every step is saved, so anyone can see who did what, and why.
+
+33
+00:01:54,323 --> 00:01:56,411
+It works on your phone, too.
+
+34
+00:01:56,661 --> 00:01:58,554
+So help is always close by.
+
+35
+00:01:59,504 --> 00:02:01,715
+Engineers find answers faster.
+
+36
+00:02:01,965 --> 00:02:04,578
+Managers get a safe way to say yes.
+
+37
+00:02:04,828 --> 00:02:09,413
+And companies get shorter outages, with a clear record of what happened.
+
+38
+00:02:10,663 --> 00:02:12,945
+This is AI Incident Commander.
+
+39
+00:02:13,195 --> 00:02:15,021
+The AI does the homework.
+
+40
+00:02:15,271 --> 00:02:16,950
+People make the decisions.
+

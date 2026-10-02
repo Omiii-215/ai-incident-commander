@@ -1,0 +1,23 @@
+# Dependencies and builds
+node_modules/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+
+# Local data and logs
+.data/
+*.log
+.DS_Store
+
+# Secrets: never commit real environment files
+.env*
+!.env.example
+.gnani.env
+
+# Vercel CLI link and prebuilt output
+.vercel/
+
+# Large or superseded video files (the web version in media/explainer is committed)
+media/explainer/master/
+media/explainer/previous/

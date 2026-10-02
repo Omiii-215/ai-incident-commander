@@ -1,0 +1,514 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:#050816}
+body{font-family:-apple-system,"SF Pro Display","Helvetica Neue",system-ui,sans-serif;color:#f8fafc;-webkit-font-smoothing:antialiased}
+#root{position:absolute;inset:0;overflow:hidden}
+.abs{position:absolute}
+/* ---------- background ---------- */
+#bg{position:absolute;inset:0;background:linear-gradient(160deg,#050816 0%,#0a0f2e 48%,#120a2a 100%)}
+.blob{position:absolute;width:1500px;height:1500px;border-radius:50%;left:0;top:0;will-change:transform}
+#grid{position:absolute;left:-1040px;width:4000px;height:1900px;top:560px;transform-origin:50% 0;
+  background-image:linear-gradient(rgba(129,140,248,.22) 2px,transparent 2px),linear-gradient(90deg,rgba(129,140,248,.22) 2px,transparent 2px);background-size:110px 110px}
+#gridfade{position:absolute;left:0;right:0;top:420px;height:700px;background:linear-gradient(180deg,#0a0f2e 0%,rgba(10,15,46,.0) 45%,rgba(5,8,22,.0) 80%,rgba(5,8,22,.85) 100%)}
+.pt{position:absolute;border-radius:50%;background:radial-gradient(circle,#c7d2fe 0%,rgba(199,210,254,0) 70%)}
+#vignette{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,rgba(0,0,0,0) 55%,rgba(0,0,0,.55) 100%);pointer-events:none}
+/* ---------- shared chrome ---------- */
+#progress{position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(255,255,255,.07)}
+#progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#22d3ee,#818cf8,#e879f9)}
+.demo{position:absolute;right:56px;top:40px;font-size:20px;font-weight:600;letter-spacing:.04em;color:#c7d2fe;padding:8px 16px;border-radius:999px;border:1px solid rgba(165,180,252,.35);background:rgba(15,23,42,.55)}
+.chapter{position:absolute;left:64px;top:30px;display:flex;align-items:center;gap:16px}
+.chapter .num{font-size:54px;font-weight:800;letter-spacing:-.02em;background:linear-gradient(135deg,#67e8f9,#a78bfa);-webkit-background-clip:text;color:transparent}
+.chapter .brand{font-size:19px;font-weight:600;color:#a5b4fc;letter-spacing:.08em;text-transform:uppercase;line-height:1.25}
+/* ---------- browser frame ---------- */
+.stage3d{position:absolute;left:0;top:0;width:1920px;height:1080px;perspective:2200px;perspective-origin:50% 40%}
+.browser{position:absolute;left:280px;top:96px;width:1360px;border-radius:20px;overflow:hidden;transform-style:preserve-3d;
+  background:#0f172a;border:1px solid rgba(165,180,252,.45);
+  box-shadow:0 60px 140px -30px rgba(59,130,246,.55),0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.04) inset}
+.browser .bar{height:40px;background:linear-gradient(180deg,#1e293b,#172033);display:flex;align-items:center;gap:9px;padding:0 18px;border-bottom:1px solid rgba(148,163,184,.25)}
+.browser .bar i{width:13px;height:13px;border-radius:50%;display:block}
+.browser .url{margin-left:22px;flex:1;max-width:620px;height:26px;border-radius:8px;background:rgba(15,23,42,.9);border:1px solid rgba(148,163,184,.25);font-size:15px;color:#cbd5e1;display:flex;align-items:center;padding:0 12px;gap:8px}
+.browser .vp{position:relative;width:1360px;height:765px;overflow:hidden;background:#fff}
+.camera{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0}
+.camera img{position:absolute;left:0;top:0;width:1600px;height:900px}
+.sheen{position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,0) 28%);pointer-events:none}
+.ring{position:absolute;border-radius:14px;pointer-events:none}
+.callout{position:absolute;white-space:nowrap;font-size:26px;font-weight:700;color:#fff;padding:10px 20px;border-radius:999px;
+  background:linear-gradient(90deg,#0891b2,#7c3aed);box-shadow:0 12px 30px rgba(124,58,237,.45)}
+.callout:after{content:"";position:absolute;left:28px;bottom:-9px;width:18px;height:18px;background:#0e7aa8;transform:rotate(45deg);border-radius:3px}
+.callout.below:after{bottom:auto;top:-9px}
+/* ---------- lower third ---------- */
+.lower{position:absolute;left:84px;bottom:64px;max-width:1120px;padding:24px 34px 26px;border-radius:24px;
+  background:linear-gradient(135deg,rgba(15,23,42,.92),rgba(30,27,75,.86));border:1px solid rgba(165,180,252,.3);
+  box-shadow:0 30px 70px rgba(0,0,0,.5)}
+.kicker{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a5b4fc;margin-bottom:8px}
+.kicker b{width:12px;height:12px;border-radius:4px;background:linear-gradient(135deg,#22d3ee,#a78bfa)}
+.cap{font-size:50px;font-weight:750;line-height:1.14;letter-spacing:-.01em}
+.w{display:inline-block;white-space:pre}
+.hl{background:linear-gradient(90deg,#67e8f9,#a78bfa 55%,#f0abfc);-webkit-background-clip:text;color:transparent}
+.uline{position:absolute;height:6px;border-radius:3px;background:linear-gradient(90deg,#22d3ee,#a78bfa,#f472b6);transform-origin:0 50%}
+/* ---------- text scenes ---------- */
+.big{font-size:104px;font-weight:800;letter-spacing:-.03em;line-height:1.02}
+.mid{font-size:44px;font-weight:600;color:#cbd5e1;line-height:1.25}
+.card{position:absolute;border-radius:26px;background:linear-gradient(160deg,rgba(30,41,82,.95),rgba(17,24,52,.95));border:1px solid rgba(165,180,252,.35);box-shadow:0 40px 90px rgba(0,0,0,.55),0 0 60px -10px rgba(99,102,241,.35)}
+.pill{display:inline-flex;align-items:center;gap:10px;border-radius:999px;font-weight:700}
+.tile{position:absolute;width:170px;height:150px;border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;font-size:24px;font-weight:700;color:#fff;box-shadow:0 24px 50px rgba(0,0,0,.45)}
+.icon{width:56px;height:56px}
+.stamp{position:absolute;font-size:34px;font-weight:800;padding:12px 26px;border-radius:14px;border:4px solid;letter-spacing:.02em;background:rgba(15,23,42,.85)}
+.phone{position:absolute;width:430px;height:900px;border-radius:64px;background:#0b1020;border:12px solid #1f2937;box-shadow:0 50px 120px rgba(0,0,0,.6),0 0 0 2px rgba(165,180,252,.35),0 0 80px -10px rgba(34,211,238,.35);overflow:hidden}
+.phone .scr{position:absolute;left:8px;top:8px;width:390px;height:844px;border-radius:48px;overflow:hidden;background:#0b1220}
+.phone .notch{position:absolute;left:50%;top:18px;width:120px;height:32px;margin-left:-60px;border-radius:20px;background:#000;z-index:3}
+</style>
+</head>
+<body>
+<div id="root">
+  <div id="bg"></div>
+  <div id="scene"></div>
+  <div id="vignette"></div>
+  <div id="progress"><i></i></div>
+</div>
+<script>
+// ===================== math & easing =====================
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, p) => a + (b - a) * p;
+const prog = (t, s, d) => clamp((t - s) / d);
+const outExpo = (p) => (p >= 1 ? 1 : 1 - Math.pow(2, -10 * p));
+const outCubic = (p) => 1 - Math.pow(1 - p, 3);
+const inOutCubic = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+const outBack = (p) => { const c1 = 1.6, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); };
+const rand = (i) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const $ = (sel, el = document) => el.querySelector(sel);
+const h = (html) => { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild; };
+const css = (el, o) => { for (const k in o) el.style[k] = o[k]; };
+
+// ===================== icons =====================
+const ICON = {
+  shield: '<path d="M32 4 8 13v17c0 14 10 24 24 30 14-6 24-16 24-30V13L32 4z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><path d="m21 32 8 8 15-16" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>',
+  bolt: '<path d="M36 4 12 36h18l-4 24 26-34H34z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>',
+  chart: '<path d="M8 56h48M16 46V30M30 46V18M44 46V24" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>',
+  logs: '<path d="M14 10h36v44H14zM22 22h20M22 32h20M22 42h12" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>',
+  chat: '<path d="M10 14h44v28H30l-12 10V42h-8z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>',
+  dash: '<path d="M8 10h48v44H8zM8 24h48M22 24v30" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>',
+  mail: '<path d="M8 14h48v36H8zM8 16l24 18 24-18" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>',
+  docs: '<path d="M16 6h22l12 12v40H16zM38 6v12h12" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>',
+  bell: '<path d="M32 8c-9 0-15 7-15 16v12l-5 8h40l-5-8V24c0-9-6-16-15-16zM26 50a6 6 0 0 0 12 0" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>',
+  person: '<circle cx="32" cy="22" r="10" fill="none" stroke="currentColor" stroke-width="4"/><path d="M12 56c2-12 10-18 20-18s18 6 20 18" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>',
+  x: '<path d="M18 18l28 28M46 18 18 46" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>',
+  moon: '<path d="M44 40A22 22 0 0 1 26 10a22 22 0 1 0 18 30z" fill="currentColor"/>',
+  spark: '<path d="M32 6l6 18 18 6-18 6-6 18-6-18-18-6 18-6z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>',
+  cart: '<path d="M6 10h8l6 30h30l6-22H18" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="24" cy="50" r="4" fill="currentColor"/><circle cx="46" cy="50" r="4" fill="currentColor"/>',
+};
+const icon = (name, size = 56, color = '#fff') => `<svg class="icon" style="width:${size}px;height:${size}px;color:${color}" viewBox="0 0 64 64">${ICON[name]}</svg>`;
+
+// ===================== background (continuous across scenes) =====================
+const BLOBS = [
+  { c: '59,130,246', x: 200, y: -300, ax: 260, ay: 120, w: 0.11, ph: 0 },
+  { c: '139,92,246', x: 900, y: 50, ax: 300, ay: 160, w: 0.09, ph: 2 },
+  { c: '6,182,212', x: -400, y: 300, ax: 220, ay: 140, w: 0.13, ph: 4 },
+  { c: '236,72,153', x: 1200, y: 500, ax: 200, ay: 100, w: 0.07, ph: 1 },
+];
+const NPT = 46;
+function buildBg() {
+  const bg = $('#bg');
+  BLOBS.forEach((b, i) => {
+    const el = h(`<div class="blob" id="blob${i}"></div>`);
+    el.style.background = `radial-gradient(circle, rgba(${b.c},.42) 0%, rgba(${b.c},.12) 35%, rgba(${b.c},0) 66%)`;
+    bg.appendChild(el);
+  });
+  bg.appendChild(h('<div id="grid"></div>'));
+  bg.appendChild(h('<div id="gridfade"></div>'));
+  for (let i = 0; i < NPT; i++) bg.appendChild(h(`<div class="pt" id="pt${i}"></div>`));
+}
+function renderBg(T, accent) {
+  BLOBS.forEach((b, i) => {
+    const x = b.x + b.ax * Math.sin(T * b.w * 2 + b.ph), y = b.y + b.ay * Math.cos(T * b.w * 1.6 + b.ph);
+    $(`#blob${i}`).style.transform = `translate(${x}px,${y}px)`;
+  });
+  $('#grid').style.transform = `perspective(900px) rotateX(74deg)`;
+  $('#grid').style.backgroundPosition = `0 ${(T * 38) % 110}px`;
+  for (let i = 0; i < NPT; i++) {
+    const z = 0.3 + rand(i) * 0.7;
+    const x = ((rand(i + 50) * 2100 + T * 22 * z) % 2100) - 90;
+    const y = rand(i + 99) * 1080 + Math.sin(T * 0.6 + i) * 16 * z;
+    const s = 3 + 7 * z;
+    css($(`#pt${i}`), { transform: `translate(${x}px,${y}px)`, width: `${s}px`, height: `${s}px`, opacity: String(0.18 + 0.55 * z * (0.75 + 0.25 * Math.sin(T * 1.3 + i))) });
+  }
+  $('#bg').style.filter = accent ? `hue-rotate(${accent}deg)` : '';
+}
+
+// ===================== kinetic caption =====================
+function captionHTML(parts) {
+  let html = '', i = 0;
+  for (const part of parts) {
+    const hl = typeof part === 'object';
+    const text = hl ? part.hl : part;
+    for (const tok of text.split(/(\s+)/)) {
+      if (!tok) continue;
+      if (/^\s+$/.test(tok)) { html += ' '; continue; }
+      html += `<span class="w${hl ? ' hl' : ''}" data-i="${i++}">${tok}</span>`;
+    }
+  }
+  return html;
+}
+function renderWords(root, t, start, stagger = 0.06) {
+  root.querySelectorAll('.w').forEach((w) => {
+    const p = outExpo(prog(t, start + Number(w.dataset.i) * stagger, 0.55));
+    w.style.transform = `translateY(${(1 - p) * 26}px)`;
+    w.style.opacity = String(p);
+  });
+}
+
+// ===================== scene builders =====================
+let S = null; // current scene spec
+let F = null; // footage frames info
+
+function chapterHTML(spec) {
+  return `<div class="chapter"><span class="num">${spec.num}</span><span class="brand">AI Incident<br>Commander</span></div><div class="demo">Live demo · sample data</div>`;
+}
+function lowerHTML(spec) {
+  return `<div class="lower"><div class="kicker"><b></b>${spec.chapter}</div><div class="cap">${captionHTML(spec.caption)}</div><div class="uline"></div></div>`;
+}
+
+function buildFootage(spec) {
+  const sc = $('#scene');
+  sc.innerHTML = `
+    <div class="stage3d"><div class="browser">
+      <div class="bar"><i style="background:#f87171"></i><i style="background:#fbbf24"></i><i style="background:#34d399"></i>
+        <div class="url">${icon('shield', 16, '#93c5fd')}<span>AI Incident Commander · Acme Shop demo</span></div></div>
+      <div class="vp"><div class="camera"><img id="foot"></div><div class="sheen"></div><div id="overlay" class="abs" style="inset:0"></div></div>
+    </div></div>
+    ${chapterHTML(spec)}${lowerHTML(spec)}`;
+}
+
+function buildPhone(spec) {
+  const sc = $('#scene');
+  sc.innerHTML = `
+    <div class="stage3d">
+      <div class="browser" id="ghost" style="left:820px;top:170px;width:980px;opacity:.55">
+        <div class="bar"><i style="background:#f87171"></i><i style="background:#fbbf24"></i><i style="background:#34d399"></i></div>
+        <div class="vp" style="width:980px;height:551px"><img src="${spec.ghost}" style="width:980px;height:551px;filter:saturate(.9)"></div>
+      </div>
+      <div class="phone" id="ph" style="left:360px;top:90px"><div class="notch"></div><div class="scr"><img id="foot" style="width:390px;height:844px"></div></div>
+    </div>
+    ${chapterHTML(spec)}
+    <div class="lower" style="left:auto;right:90px;bottom:120px;max-width:760px"><div class="kicker"><b></b>${spec.chapter}</div><div class="cap" style="font-size:64px">${captionHTML(spec.caption)}</div><div class="uline"></div></div>`;
+}
+
+function buildIntro(spec) {
+  $('#scene').innerHTML = `
+    <div id="sting" class="abs" style="inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px">
+      <div id="ringburst" class="abs" style="left:50%;top:44%;width:300px;height:300px;margin:-150px 0 0 -150px;border-radius:50%;border:3px solid rgba(103,232,249,.8)"></div>
+      <svg id="logo" viewBox="0 0 64 64" style="width:150px;height:150px;color:#67e8f9;filter:drop-shadow(0 0 30px rgba(34,211,238,.6))">
+        <path id="lg1" d="M32 4 8 13v17c0 14 10 24 24 30 14-6 24-16 24-30V13L32 4z" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/>
+        <path id="lg2" d="m21 32 8 8 15-16" fill="none" stroke="#c4b5fd" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div id="title" class="big" style="font-size:96px">${captionHTML(['AI Incident ', { hl: 'Commander' }])}</div>
+    </div>
+    <div id="story" class="abs" style="inset:0">
+      <div id="shop" class="card" style="left:1010px;top:200px;width:620px;height:560px;padding:34px">
+        <div style="display:flex;align-items:center;gap:14px;font-size:34px;font-weight:800">${icon('cart', 44, '#a5b4fc')}Checkout</div>
+        ${[0, 1, 2].map((i) => `<div style="display:flex;justify-content:space-between;align-items:center;margin-top:${i ? 18 : 30}px"><div style="width:${[300, 240, 270][i]}px;height:22px;border-radius:11px;background:rgba(148,163,184,.3)"></div><div style="font-size:26px;color:#cbd5e1;font-weight:600">$${[48, 19, 32][i]}.00</div></div>`).join('')}
+        <div style="margin-top:30px;border-top:1px solid rgba(148,163,184,.3);padding-top:22px;display:flex;justify-content:space-between;font-size:30px;font-weight:800"><span>Total</span><span>$99.00</span></div>
+        <div id="paybtn" style="margin-top:28px;height:76px;border-radius:18px;background:linear-gradient(90deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800">Pay now</div>
+        <div id="err" class="abs" style="left:34px;right:34px;bottom:34px;height:76px;border-radius:18px;background:#7f1d1d;border:2px solid #f87171;display:flex;align-items:center;justify-content:center;gap:14px;font-size:28px;font-weight:800;color:#fecaca">${icon('x', 34, '#fecaca')}Payment failed</div>
+      </div>
+      ${['500 error', 'Checkout down', 'Errors rising'].map((t, i) => `<div id="alert${i}" class="pill abs" style="left:${[1560, 950, 1660][i]}px;top:${[150, 160, 470][i]}px;padding:12px 22px;font-size:24px;background:#450a0a;border:2px solid #ef4444;color:#fecaca">${icon('bell', 26, '#fca5a5')}${t}</div>`).join('')}
+      <div id="people" class="abs" style="left:980px;top:800px;display:flex;gap:24px">
+        ${[0, 1, 2, 3].map((i) => `<div id="pp${i}" style="position:relative;width:96px;height:96px;border-radius:50%;background:rgba(30,41,82,.95);border:2px solid rgba(165,180,252,.4);display:flex;align-items:center;justify-content:center">${icon('person', 58, '#c7d2fe')}<div class="abs" style="right:-8px;top:-8px;width:40px;height:40px;border-radius:50%;background:#dc2626;display:flex;align-items:center;justify-content:center">${icon('x', 24, '#fff')}</div></div>`).join('')}
+      </div>
+      <div id="night" class="abs" style="inset:0;background:linear-gradient(180deg,rgba(2,6,23,.85),rgba(2,6,23,.4))"></div>
+      <div class="abs" style="left:120px;top:300px;width:820px">
+        <div id="hl0" class="big" style="font-size:92px">${captionHTML(['Websites ', { hl: 'break.' }])}</div>
+        <div id="hl1" class="big" style="font-size:92px;margin-top:14px">${captionHTML(['People ', { hl: "can't pay." }])}</div>
+        <div id="hl2" class="mid" style="margin-top:34px;font-size:50px">${captionHTML(['Someone has to fix it. ', { hl: 'Fast.' }])}</div>
+      </div>
+      <div id="moon" class="abs" style="left:960px;top:70px;color:#fde68a;filter:drop-shadow(0 0 30px rgba(253,230,138,.6))">${icon('moon', 110, '#fde68a')}</div>
+      <div id="call" class="phone" style="left:1440px;top:150px;width:400px;height:820px">
+        <div class="notch"></div>
+        <div class="scr" style="width:376px;height:796px;background:linear-gradient(180deg,#1e1b4b,#0f172a)">
+          <div style="text-align:center;margin-top:110px;font-size:110px;font-weight:300;letter-spacing:-.02em">2:47</div>
+          <div style="text-align:center;font-size:24px;color:#c7d2fe">Tuesday</div>
+          <div id="notif" style="margin:60px 18px 0;padding:22px;border-radius:26px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2)">
+            <div style="display:flex;align-items:center;gap:12px;font-size:20px;color:#c7d2fe;font-weight:700">${icon('shield', 26, '#67e8f9')}INCIDENT COMMANDER<span style="margin-left:auto;font-weight:500">now</span></div>
+            <div style="font-size:27px;font-weight:800;margin-top:10px">Checkout is failing</div>
+            <div style="font-size:23px;color:#e2e8f0;margin-top:4px">You are on call. Tap to open.</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function buildProblem(spec) {
+  const tiles = [
+    { n: 'Logs', i: 'logs', c: '#0e7490', x: 1080, y: 170 },
+    { n: 'Chat', i: 'chat', c: '#7c3aed', x: 1340, y: 120 },
+    { n: 'Charts', i: 'dash', c: '#2563eb', x: 1600, y: 210 },
+    { n: 'Email', i: 'mail', c: '#be185d', x: 1180, y: 380 },
+    { n: 'Docs', i: 'docs', c: '#0f766e', x: 1460, y: 400 },
+    { n: 'Alerts', i: 'bell', c: '#b45309', x: 1700, y: 450 },
+  ];
+  $('#scene').innerHTML = `
+    ${chapterHTML(spec)}
+    <div class="abs" style="left:120px;top:250px;width:900px">
+      <div id="hd" class="big">${captionHTML([spec.headline[0] + ' ', { hl: spec.headline[1] }])}</div>
+      <div style="margin-top:48px;display:flex;flex-direction:column;gap:26px">
+        ${spec.points.map((p, i) => `<div id="pt-${i}" class="mid" style="display:flex;gap:22px;align-items:flex-start;font-size:42px"><span style="flex:none;margin-top:14px;width:22px;height:22px;border-radius:7px;background:${['#22d3ee', '#a78bfa', '#f472b6'][i]}"></span><span>${p}</span></div>`).join('')}
+      </div>
+    </div>
+    ${tiles.map((t, k) => `<div class="tile" id="tile${k}" style="left:${t.x}px;top:${t.y}px;background:linear-gradient(160deg,${t.c},rgba(15,23,42,.9))">${icon(t.i, 54)}${t.n}</div>`).join('')}
+    <div id="ai" class="card" style="left:1170px;top:610px;width:600px;height:250px;padding:34px;display:flex;gap:26px;align-items:center">
+      <div style="width:120px;height:120px;border-radius:30px;background:linear-gradient(135deg,#6366f1,#a855f7);display:flex;align-items:center;justify-content:center">${icon('spark', 70)}</div>
+      <div><div style="font-size:38px;font-weight:800">AI helper</div><div style="font-size:28px;color:#cbd5e1;margin-top:6px">"I think I'll just restart it."</div></div>
+    </div>
+    <div id="st0" class="stamp" style="left:1130px;top:560px;color:#fbbf24;border-color:#fbbf24">Just a guess?</div>
+    <div id="st1" class="stamp" style="left:1440px;top:850px;color:#f87171;border-color:#f87171">Nobody agreed</div>`;
+  S._tiles = tiles;
+}
+
+function buildWho(spec) {
+  const colors = [['#06b6d4', '#2563eb'], ['#8b5cf6', '#6366f1'], ['#ec4899', '#a855f7']];
+  $('#scene').innerHTML = `
+    ${chapterHTML(spec)}
+    <div id="whoh" class="big abs" style="left:0;right:0;top:150px;text-align:center;font-size:88px">${captionHTML(['Who it ', { hl: 'helps' }])}</div>
+    <div class="stage3d">
+      ${spec.cards.map((c, i) => `
+        <div class="card" id="wc${i}" style="left:${150 + i * 560}px;top:380px;width:500px;height:440px;padding:48px 44px;transform-style:preserve-3d">
+          <div style="width:120px;height:120px;border-radius:32px;background:linear-gradient(135deg,${colors[i][0]},${colors[i][1]});display:flex;align-items:center;justify-content:center;box-shadow:0 20px 50px -10px ${colors[i][0]}">${icon(c.icon, 66)}</div>
+          <div style="font-size:52px;font-weight:800;margin-top:40px">${c.title}</div>
+          <div style="font-size:36px;color:#cbd5e1;margin-top:14px;line-height:1.25">${c.text}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function buildOutro(spec) {
+  $('#scene').innerHTML = `
+    <div class="abs" style="inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+      <div id="halo" class="abs" style="left:50%;top:36%;width:520px;height:520px;margin:-260px 0 0 -260px;border-radius:50%;background:radial-gradient(circle,rgba(34,211,238,.35),rgba(124,58,237,.15) 45%,rgba(0,0,0,0) 70%)"></div>
+      <svg id="ologo" viewBox="0 0 64 64" style="width:170px;height:170px;color:#67e8f9;filter:drop-shadow(0 0 40px rgba(34,211,238,.7))">${ICON.shield.replace('stroke="currentColor" stroke-width="4.5"', 'stroke="#c4b5fd" stroke-width="4.5"')}</svg>
+      <div id="otitle" class="big" style="font-size:110px;margin-top:34px">${captionHTML(['AI Incident ', { hl: 'Commander' }])}</div>
+      <div id="o1" class="mid" style="margin-top:34px;font-size:48px">${captionHTML(['The AI does the ', { hl: 'homework.' }])}</div>
+      <div id="o2" class="mid" style="margin-top:12px;font-size:48px">${captionHTML(['People make the ', { hl: 'decisions.' }])}</div>
+      <div id="o3" style="margin-top:56px;font-size:22px;color:#94a3b8;letter-spacing:.06em">LIVE DEMO WITH SAMPLE DATA · FIXES RUN ON A PRACTICE SYSTEM</div>
+    </div>`;
+}
+
+// ===================== per-frame renderers =====================
+function renderChrome(t) {
+  const ch = $('.chapter');
+  if (ch) { const p = outExpo(prog(t, 0.2, 0.8)); css(ch, { opacity: String(p), transform: `translateY(${(1 - p) * -20}px)` }); }
+  const demo = $('.demo');
+  if (demo) demo.style.opacity = String(outCubic(prog(t, 0.4, 0.8)));
+  const lower = $('.lower');
+  if (lower) {
+    const p = outExpo(prog(t, 0.25, 0.8));
+    css(lower, { opacity: String(p), transform: `translateX(${(1 - p) * -60}px)` });
+    const k = $('.kicker', lower); const pk = outExpo(prog(t, 0.35, 0.7));
+    css(k, { opacity: String(pk), transform: `translateX(${(1 - pk) * -24}px)` });
+    renderWords(lower, t, 0.55);
+    const ul = $('.uline', lower);
+    const hls = [...lower.querySelectorAll('.hl')];
+    if (hls.length) {
+      const a = hls[0].getBoundingClientRect(), b = hls[hls.length - 1].getBoundingClientRect(), L = lower.getBoundingClientRect();
+      const last = Number(hls[hls.length - 1].dataset.i);
+      const pu = inOutCubic(prog(t, 0.55 + last * 0.06 + 0.35, 0.6));
+      css(ul, { left: `${a.left - L.left}px`, top: `${b.bottom - L.top + 2}px`, width: `${b.right - a.left}px`, transform: `scaleX(${pu})` });
+    } else ul.style.display = 'none';
+  }
+}
+
+function cameraAt(t) {
+  // Blend between identity and each focus event.
+  let s = 1, cx = 800, cy = 450, w = 0;
+  for (const f of S.focus ?? []) {
+    const pin = inOutCubic(prog(t, f.start, 0.8)), pout = inOutCubic(prog(t, f.start + 0.8 + f.hold, 0.8));
+    const k = pin * (1 - pout);
+    if (k > w) { w = k; s = lerp(1, f.zoom, k); cx = lerp(800, f.cx, k); cy = lerp(450, f.cy, k); }
+  }
+  let tx = 800 - s * cx, ty = 450 - s * cy;
+  tx = clamp(tx, 1600 - s * 1600, 0); ty = clamp(ty, 900 - s * 900, 0);
+  return { s, tx, ty };
+}
+
+function renderOverlay(t, cam, k) {
+  const ov = $('#overlay');
+  ov.innerHTML = '';
+  for (const f of S.focus ?? []) {
+    const pin = outExpo(prog(t, f.start + 0.45, 0.6)), pout = inOutCubic(prog(t, f.start + 0.8 + f.hold - 0.1, 0.5));
+    const a = pin * (1 - pout);
+    if (a <= 0.01) continue;
+    const pad = 10;
+    const x = (f.rect.x * cam.s + cam.tx) * k - pad, y = (f.rect.y * cam.s + cam.ty) * k - pad;
+    const w = f.rect.w * cam.s * k + pad * 2, hh = f.rect.h * cam.s * k + pad * 2;
+    const grow = 1 + (1 - pin) * 0.12;
+    const glow = 0.55 + 0.25 * Math.sin(t * 6);
+    const ring = h('<div class="ring"></div>');
+    css(ring, { left: `${x}px`, top: `${y}px`, width: `${w}px`, height: `${hh}px`, opacity: String(a), transform: `scale(${grow})`,
+      boxShadow: `0 0 0 4px #22d3ee, 0 0 0 9px rgba(167,139,250,.45), 0 0 40px 8px rgba(34,211,238,${glow})` });
+    ov.appendChild(ring);
+    if (f.label) {
+      const below = f.below || y < 90;
+      const lab = h(`<div class="callout${below ? ' below' : ''}">${f.label}</div>`);
+      const lx = clamp(x, 16, 1360 - 16 - f.label.length * 15 - 40);
+      css(lab, { left: `${lx}px`, top: below ? `${y + hh + 18}px` : `${y - 66}px`, opacity: String(a), transform: `translateY(${(1 - pin) * (below ? -14 : 14)}px)` });
+      ov.appendChild(lab);
+    }
+  }
+}
+
+async function setFootFrame(t) {
+  const img = $('#foot');
+  if (!img || !F) return;
+  const idx = clamp(Math.floor((t - (S.footOffset ?? 0)) * 30) + 1, 1, F.count);
+  const src = `${F.dir}/${String(idx).padStart(5, '0')}.jpg`;
+  if (img.dataset.src !== src) {
+    img.dataset.src = src;
+    // onload fires reliably even when the page is not the foreground tab; never wait forever.
+    await Promise.race([
+      new Promise((r) => { img.onload = r; img.onerror = r; img.src = src; }),
+      new Promise((r) => setTimeout(r, 3000)),
+    ]);
+  }
+}
+
+function renderBrowser(t) {
+  const br = $('.browser');
+  const D = S.duration;
+  const pin = outExpo(prog(t, 0, 1.0)), pout = inOutCubic(prog(t, D - 0.75, 0.75));
+  const ry = lerp(-26, -5, pin) + 2.2 * Math.sin(t * 0.45) + pout * 14;
+  const rx = lerp(14, 3, pin) + 0.9 * Math.sin(t * 0.33 + 1);
+  const z = lerp(-520, 0, pin) - pout * 260;
+  const fy = 7 * Math.sin(t * 0.8);
+  css(br, { transform: `translateY(${fy}px) translateZ(${z}px) rotateX(${rx}deg) rotateY(${ry}deg)`, opacity: String(clamp(pin * 1.6) * (1 - pout * 0.6)) });
+  const k = 1360 / 1600;
+  const cam = cameraAt(t);
+  $('.camera').style.transform = `scale(${k}) translate(${cam.tx}px,${cam.ty}px) scale(${cam.s})`;
+  renderOverlay(t, cam, k);
+}
+
+function renderPhone(t) {
+  const D = S.duration;
+  const pin = outExpo(prog(t, 0, 1.0)), pout = inOutCubic(prog(t, D - 0.75, 0.75));
+  css($('#ph'), { transform: `scale(.84) translateY(${lerp(240, 0, pin) + 10 * Math.sin(t * 0.9)}px) rotateY(${lerp(38, 16, pin) - 6 * Math.sin(t * 0.4) - pout * 20}deg) rotateX(${lerp(10, 4, pin)}deg) translateZ(${-pout * 200}px)`, opacity: String(clamp(pin * 1.6)) });
+  css($('#ghost'), { transform: `translateZ(-320px) rotateY(-22deg) translateX(${lerp(200, 0, pin)}px)`, opacity: String(0.5 * pin) });
+}
+
+function renderIntro(t) {
+  const sp = S.speechStart, st = S.sentences.map((x) => sp + x.start);
+  // Brand sting (0 to ~1.9s), then hand over to the story.
+  const L1 = $('#lg1'), L2 = $('#lg2');
+  const len1 = 190, len2 = 40;
+  L1.style.strokeDasharray = len1; L1.style.strokeDashoffset = String(len1 * (1 - inOutCubic(prog(t, 0.05, 0.9))));
+  L2.style.strokeDasharray = len2; L2.style.strokeDashoffset = String(len2 * (1 - outCubic(prog(t, 0.75, 0.45))));
+  const rb = prog(t, 0.6, 1.0);
+  css($('#ringburst'), { transform: `scale(${0.4 + rb * 2.6})`, opacity: String((1 - rb) * (rb > 0 ? 1 : 0)) });
+  renderWords($('#title'), t, 0.55, 0.12);
+  const out = inOutCubic(prog(t, st[0] - 0.45, 0.6));
+  css($('#sting'), { opacity: String(1 - out), transform: `scale(${1 + out * 0.15})` });
+  // Story
+  const story = $('#story');
+  story.style.opacity = String(outCubic(prog(t, st[0] - 0.4, 0.5)));
+  renderWords($('#hl0'), t, st[0] + 0.1, 0.08);
+  renderWords($('#hl1'), t, st[1], 0.08);
+  renderWords($('#hl2'), t, st[2] + 0.1, 0.07);
+  const pc = outExpo(prog(t, st[0] - 0.2, 0.9));
+  const shake = Math.sin(t * 38) * 10 * Math.exp(-6 * Math.max(0, t - (st[0] + 1.3))) * (t > st[0] + 1.3 ? 1 : 0);
+  css($('#shop'), { opacity: String(pc), transform: `translate(${(1 - pc) * 120 + shake}px,0) rotate(${-2 + Math.sin(t * 0.7)}deg)` });
+  const pe = outBack(prog(t, st[0] + 1.3, 0.5));
+  css($('#err'), { opacity: String(clamp(pe)), transform: `scale(${0.7 + 0.3 * pe})`, boxShadow: `0 0 ${30 + 20 * Math.sin(t * 8)}px rgba(239,68,68,.6)` });
+  for (let i = 0; i < 3; i++) {
+    const pa = outBack(prog(t, st[0] + 1.7 + i * 0.35, 0.5));
+    css($(`#alert${i}`), { opacity: String(clamp(pa)), transform: `scale(${pa}) translateY(${Math.sin(t * 2 + i) * 6}px)` });
+  }
+  for (let i = 0; i < 4; i++) {
+    const pp = outBack(prog(t, st[1] + 0.1 + i * 0.16, 0.5));
+    css($(`#pp${i}`), { opacity: String(clamp(pp)), transform: `scale(${pp}) translateY(${(1 - clamp(pp)) * 40}px)` });
+  }
+  const pn = inOutCubic(prog(t, st[2] - 0.1, 1.0));
+  $('#night').style.opacity = String(pn * 0.85);
+  css($('#moon'), { opacity: String(pn), transform: `translateY(${(1 - pn) * 40}px)` });
+  const pcall = outExpo(prog(t, st[2] + 0.2, 1.0));
+  const buzz = t > st[2] + 1.1 ? Math.sin(t * 60) * 5 * Math.max(0, Math.sin((t - st[2]) * 3)) : 0;
+  css($('#call'), { opacity: String(pcall), transform: `translate(${buzz}px,${(1 - pcall) * 500}px) rotate(${-6 + 4 * (1 - pcall)}deg)` });
+  const pnot = outBack(prog(t, st[2] + 1.0, 0.6));
+  css($('#notif'), { opacity: String(clamp(pnot)), transform: `scale(${0.8 + 0.2 * pnot})` });
+  const fade = inOutCubic(prog(t, S.duration - 0.6, 0.6));
+  $('#scene').style.opacity = String(1 - fade);
+}
+
+function renderProblem(t) {
+  renderChrome(t);
+  const sp = S.speechStart, st = S.sentences.map((x) => sp + x.start);
+  renderWords($('#hd'), t, st[0] - 0.2, 0.1);
+  const ptStarts = [st[1], st[1] + 1.4, st[2]];
+  for (let i = 0; i < 3; i++) {
+    const p = outExpo(prog(t, ptStarts[i], 0.7));
+    css($(`#pt-${i}`), { opacity: String(p), transform: `translateX(${(1 - p) * -40}px)` });
+  }
+  S._tiles.forEach((tl, k) => {
+    const p = outBack(prog(t, st[1] + 0.15 + k * 0.14, 0.6));
+    const jx = Math.sin(t * 1.2 + k * 1.7) * 14, jy = Math.cos(t * 1.0 + k) * 12;
+    css($(`#tile${k}`), { opacity: String(clamp(p)), transform: `translate(${jx}px,${jy + (1 - clamp(p)) * 60}px) rotate(${Math.sin(t * 0.8 + k) * 6}deg) scale(${0.6 + 0.4 * p})` });
+  });
+  const pa = outExpo(prog(t, st[2] - 0.1, 0.8));
+  css($('#ai'), { opacity: String(pa), transform: `translateY(${(1 - pa) * 80}px)` });
+  for (let i = 0; i < 2; i++) {
+    const ps = outBack(prog(t, st[2] + 1.2 + i * 1.3, 0.45));
+    css($(`#st${i}`), { opacity: String(clamp(ps)), transform: `scale(${2 - ps}) rotate(${i ? 6 : -8}deg)` });
+  }
+  const fade = inOutCubic(prog(t, S.duration - 0.6, 0.6));
+  $('#scene').style.opacity = String(1 - fade);
+}
+
+function renderWho(t) {
+  renderChrome(t);
+  const sp = S.speechStart, st = S.sentences.map((x) => sp + x.start);
+  renderWords($('#whoh'), t, 0.2, 0.1);
+  for (let i = 0; i < 3; i++) {
+    const p = outExpo(prog(t, st[i] - 0.15, 1.0));
+    css($(`#wc${i}`), { opacity: String(clamp(p * 1.5)), transform: `translateY(${(1 - p) * 120 + Math.sin(t * 0.9 + i) * 8}px) rotateY(${(1 - p) * 70 + Math.sin(t * 0.5 + i) * 4}deg) rotateX(${(1 - p) * -20}deg)` });
+  }
+  const fade = inOutCubic(prog(t, S.duration - 0.6, 0.6));
+  $('#scene').style.opacity = String(1 - fade);
+}
+
+function renderOutro(t) {
+  const sp = S.speechStart, st = S.sentences.map((x) => sp + x.start);
+  const pl = outBack(prog(t, 0.1, 0.9));
+  css($('#ologo'), { opacity: String(clamp(pl)), transform: `scale(${0.5 + 0.5 * pl}) rotate(${(1 - clamp(pl)) * -20}deg)` });
+  css($('#halo'), { transform: `scale(${0.9 + 0.08 * Math.sin(t * 2)})`, opacity: String(outCubic(prog(t, 0.2, 1))) });
+  renderWords($('#otitle'), t, st[0] + 0.3, 0.12);
+  renderWords($('#o1'), t, st[1], 0.08);
+  renderWords($('#o2'), t, st[2], 0.08);
+  $('#o3').style.opacity = String(outCubic(prog(t, st[2] + 1.6, 0.8)));
+  const fade = inOutCubic(prog(t, S.duration - 0.9, 0.9));
+  $('#root').style.opacity = String(1 - fade);
+}
+
+// ===================== public API =====================
+window.setupScene = async (spec) => {
+  S = spec;
+  F = spec.frames ?? null;
+  $('#root').style.opacity = '1';
+  $('#scene').style.opacity = '1';
+  if (!$('#blob0')) buildBg();
+  ({ footage: buildFootage, phone: buildPhone, intro: buildIntro, problem: buildProblem, who: buildWho, outro: buildOutro })[spec.layout](spec);
+  await document.fonts.ready;
+  await Promise.all([...document.images].map((i) => (i.complete ? null : i.decode().catch(() => {}))));
+};
+
+window.renderFrame = async (t) => {
+  const T = S.absStart + t;
+  renderBg(T, 0);
+  $('#progress i').style.width = `${(T / S.total) * 100}%`;
+  if (S.layout === 'footage') { renderChrome(t); await setFootFrame(t); renderBrowser(t); }
+  else if (S.layout === 'phone') { renderChrome(t); await setFootFrame(t); renderPhone(t); }
+  else if (S.layout === 'intro') renderIntro(t);
+  else if (S.layout === 'problem') renderProblem(t);
+  else if (S.layout === 'who') renderWho(t);
+  else if (S.layout === 'outro') renderOutro(t);
+};
+</script>
+</body>
+</html>

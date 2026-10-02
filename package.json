@@ -1,0 +1,33 @@
+{
+  "name": "ai-incident-commander",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.8.1",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev:mongo": "tsx --env-file-if-exists=.env scripts/dev-mongo.ts",
+    "migrate": "tsx --env-file-if-exists=.env scripts/migrate.ts",
+    "seed": "tsx --env-file-if-exists=.env scripts/seed.ts",
+    "dev": "concurrently -n api,worker,web -c blue,magenta,green \"pnpm --filter @aic/api dev\" \"pnpm --filter @aic/worker dev\" \"pnpm --filter @aic/web dev\"",
+    "send-alert": "tsx --env-file-if-exists=.env scripts/send-alert.ts",
+    "typecheck": "pnpm -r --workspace-concurrency=1 --if-present typecheck",
+    "test:unit": "vitest run --project unit",
+    "test:integration": "vitest run --project integration",
+    "test": "vitest run",
+    "build": "pnpm --filter @aic/web build"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.4",
+    "concurrently": "10.0.5",
+    "mongodb": "7.7.0",
+    "mongodb-memory-server": "11.3.0",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "vitest": "5.0.3"
+  },
+  "dependencies": {
+    "@aic/core": "workspace:*"
+  }
+}
