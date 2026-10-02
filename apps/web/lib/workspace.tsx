@@ -2,6 +2,7 @@
 
 import type { MeDTO } from '@aic/contracts';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createContext, useContext, useEffect, type ReactNode } from 'react';
 import { api, ApiError, setCsrfToken } from './api';
@@ -45,9 +46,9 @@ export function WorkspaceProvider({ slug, children, fallback }: { slug: string; 
         <h1 className="page-title">Workspace unavailable</h1>
         <p className="mt-2 text-fg-secondary">This workspace does not exist or you no longer have access to it.</p>
         {me.data.workspaces[0] && (
-          <a className="mt-4 inline-block text-accent underline" href={`/w/${me.data.workspaces[0].slug}/overview`}>
+          <Link className="mt-4 inline-block text-accent underline" href={`/w/${me.data.workspaces[0].slug}/overview`}>
             Go to {me.data.workspaces[0].name}
-          </a>
+          </Link>
         )}
       </main>
     );

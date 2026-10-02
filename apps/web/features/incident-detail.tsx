@@ -546,7 +546,15 @@ function EvidenceCard({ incident }: { incident: IncidentDTO }) {
               <pre className="mt-2 max-h-80 overflow-auto rounded-[6px] bg-surface-subtle p-3 font-mono text-sm whitespace-pre-wrap break-words" tabIndex={0} aria-label={`Excerpt: ${e.title}`}>
                 {e.redactedExcerpt}
               </pre>
-              <a className="mt-2 inline-flex min-h-11 items-center text-accent underline" href={`/api/v1/workspaces/${workspace.id}/evidence/${e.id}/download`}>
+              <a
+                className="mt-2 inline-flex min-h-11 items-center text-accent underline"
+                href={
+                  process.env.NEXT_PUBLIC_DEMO === '1'
+                    ? `data:text/plain;charset=utf-8,${encodeURIComponent(`# ${e.title}\n# source: ${e.sourceId} (redacted excerpt)\n\n${e.redactedExcerpt}\n`)}`
+                    : `/api/v1/workspaces/${workspace.id}/evidence/${e.id}/download`
+                }
+                download={`evidence-${e.id}.txt`}
+              >
                 Download redacted excerpt
               </a>
             </details>

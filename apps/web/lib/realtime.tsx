@@ -25,6 +25,14 @@ type StreamCtx = {
 const Ctx = createContext<StreamCtx | null>(null);
 
 const HEARTBEAT_STALE_MS = 45_000;
+
+// Showcase build only: an in-browser stream that mirrors the server's SSE events.
+let demoStream: (new (workspaceId: string) => EventTarget) | null = null;
+if (process.env.NEXT_PUBLIC_DEMO === '1' && typeof window !== 'undefined') {
+  void import('./demo/server').then((m) => {
+    demoStream = m.DemoEventSource;
+  });
+}
 const SEEN_LIMIT = 500;
 
 export function useDashboard(workspaceId: string) {
@@ -49,6 +57,7 @@ export function StreamProvider({ workspaceId, children }: { workspaceId: string;
   const coalesce = useRef<NodeJS.Timeout | null>(null);
   const opened = useRef(false);
   const heartbeatRef = useRef<number | null>(null);
+  const openRef = useRef<((cursor: string) => void) | null>(null);
 
   const invalidate = useCallback(
     (e: StreamInvalidation) => {
@@ -108,9 +117,20 @@ export function StreamProvider({ workspaceId, children }: { workspaceId: string;
 
   const open = useCallback(
     (cursor: string) => {
+      if (process.env.NEXT_PUBLIC_DEMO === '1' && !demoStream) {
+        // Showcase build: load the in-browser stream first, then connect.
+        void import('./demo/server').then((m) => {
+          demoStream = m.DemoEventSource;
+          openRef.current?.(cursor);
+        });
+        return;
+      }
       close();
       const gen = ++generation.current;
-      const es = new EventSource(`/api/v1/workspaces/${workspaceId}/events?after=${encodeURIComponent(cursor)}`);
+      const es: EventSource =
+        process.env.NEXT_PUBLIC_DEMO === '1' && demoStream
+          ? (new demoStream(workspaceId) as unknown as EventSource)
+          : new EventSource(`/api/v1/workspaces/${workspaceId}/events?after=${encodeURIComponent(cursor)}`);
       source.current = es;
       setState('connecting');
       heartbeatRef.current = Date.now();
@@ -185,6 +205,8 @@ export function StreamProvider({ workspaceId, children }: { workspaceId: string;
     },
     [close, invalidate, qc, workspaceId],
   );
+
+  openRef.current = open;
 
   // Open once per snapshot generation using the transactional snapshot cursor.
   const cursor = (dashboard.data as ApiResult<DashboardDTO> | undefined)?.meta.snapshotCursor as string | undefined;

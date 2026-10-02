@@ -10,6 +10,7 @@ import { StreamProvider, useStream, type ConnectionState } from '@/lib/realtime'
 import { useWorkspace, WorkspaceProvider } from '@/lib/workspace';
 import { Icon } from './icons';
 import { Logo, LogoMark } from './logo';
+import { DemoBanner } from './demo-banner';
 import { Skeleton } from './ui';
 
 type NavItem = { href: string; label: string; icon: string; op: string };
@@ -159,9 +160,9 @@ function AccountMenu() {
             {me.workspaces
               .filter((w) => w.id !== workspace.id)
               .map((w) => (
-                <a key={w.id} href={`/w/${w.slug}/overview`} className="block min-h-11 py-2 text-accent underline">
+                <Link key={w.id} href={`/w/${w.slug}/overview`} className="block min-h-11 py-2 text-accent underline">
                   {w.name}
-                </a>
+                </Link>
               ))}
           </div>
         )}
@@ -259,6 +260,7 @@ function Frame({ children }: { children: ReactNode }) {
             <AccountMenu />
           </div>
         </header>
+        {process.env.NEXT_PUBLIC_DEMO === '1' && <DemoBanner />}
         {workspace.dispatchStopped && (
           <div role="status" className="border-b border-warning/40 bg-warning-surface px-4 py-2 text-sm text-warning md:px-6">
             Action dispatch is stopped for this workspace. Approved requests will not execute until a commander or admin resumes dispatch.

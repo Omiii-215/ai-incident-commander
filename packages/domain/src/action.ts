@@ -1,6 +1,6 @@
 import type { ActionSpec, ActionStatus } from '@aic/contracts';
 import { AppError } from '@aic/contracts';
-import { hashCanonical } from './canonical.js';
+import { hashCanonical } from './canonical';
 
 // Action lifecycle (EVENT_FLOWS.md §5) and approval binding rules
 // (SECURITY_AND_PERMISSIONS.md §5).

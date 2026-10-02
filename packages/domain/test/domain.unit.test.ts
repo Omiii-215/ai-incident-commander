@@ -157,3 +157,13 @@ describe('fingerprint', () => {
     expect(a).not.toBe(c);
   });
 });
+
+describe('pure sha256', () => {
+  it('matches node:crypto for text, unicode and block-boundary lengths', async () => {
+    const { createHash } = await import('node:crypto');
+    const { sha256Hex } = await import('../src/sha256.js');
+    for (const input of ['', 'abc', 'a'.repeat(55), 'a'.repeat(56), 'a'.repeat(64), 'a'.repeat(1000), 'résumé ✓ 日本', JSON.stringify({ x: [1, 2], y: 'z' })]) {
+      expect(sha256Hex(input)).toBe(createHash('sha256').update(input, 'utf8').digest('hex'));
+    }
+  });
+});

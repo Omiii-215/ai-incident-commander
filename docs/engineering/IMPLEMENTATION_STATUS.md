@@ -15,13 +15,15 @@ The referenced `IMPLEMENTATION_PLAN.md`, `TEST_STRATEGY.md`, `DOCUMENTATION_QA.m
 | Worker | `apps/worker` | Outbox dispatcher → BullMQ (job ID = outbox ID), role-filtered consumers (`WORKER_ROLE=investigator|executor|dispatcher|all`), expiry scan |
 | Web | `apps/web` | Next.js 16 App Router, Tailwind 4 tokens, TanStack Query, one SSE stream per tab |
 | Local infra | `infra/docker-compose.yml`, `scripts/dev-mongo.ts` | Single-node replica set on port 27018, Redis |
+| Showcase site | `apps/site` | Static product page deployed to Vercel (https://ai-incident-commander-app.vercel.app) |
+| Public demo | `apps/web/lib/demo`, `scripts/demo-capture.ts`, `scripts/demo-e2e.mjs` | The real dashboard built statically (`NEXT_PUBLIC_DEMO=1`) with an in-browser backend over a recorded sample-data snapshot. Reuses `@aic/domain` for permissions, lifecycle, approval and dispatch rules. 19 end-to-end checks pass locally and against the deployment |
 
 ## Verification performed
 
 | Check | Result |
 | --- | --- |
 | `pnpm typecheck` (6 projects, strict) | Pass |
-| `pnpm test:unit` | 33 tests pass |
+| `pnpm test:unit` | 34 tests pass (includes pure SHA-256 equivalence with Node crypto) |
 | `pnpm test:integration` (in-memory replica set) | 44 tests pass: ingestion replay/conflict/signature, concurrent correlation, cross-workspace negatives, idempotency 409/412/428, role denials, approval independence/expiry/stale revision/concurrent approvers, duplicate delivery, revoked grant, revoked approver, stop control, `outcome_unknown` reconciliation (both directions), renewal lineage, citation repair/degrade, provider outage, injection flagging, secret canary redaction, postmortem, SSE replay/resync, CSRF/origin, uniform 404 |
 | `next build` | Pass |
 | Manual browser run | Canonical journey at desktop (alert → acknowledge → cited diagnosis → request → independent approval → simulated rollback succeeded); no horizontal overflow at 320 px on overview, incidents, incident detail, approval review, services, runbooks, audit |
@@ -39,3 +41,4 @@ Not yet verified: automated browser/e2e tests, axe or screen-reader passes, forc
 - **Contract additions:** `IncidentDTO.allowedTransitions`, per-workspace `capabilities`/`dispatchStopped` on `/me`, `GET /incidents/{id}/diagnosis`, `GET /incidents/{id}/investigations/latest`, `GET /evidence/{id}`, `GET /runbooks/search`, `PUT /runbooks/{id}/versions/{versionId}/content`, `GET /incidents/{id}/postmortem-drafts/latest`, `POST /dispatch-controls`. These are additive, and the UI uses them so it never re-implements the state machine or permission matrix.
 - **Production actions** (M3) are not implemented. `remediations:execute` grants are rejected.
 - No linter is configured yet, so `pnpm lint` from AGENTS.md §7 does not exist.
+- **Public demo:** the browser-only backend in `apps/web/lib/demo` simulates the API for the showcase. It reuses the domain rules but not the persistence, transaction, outbox or SSE code; it is a demonstration surface, not a second deployment target. `@aic/domain` now uses a dependency-free SHA-256 so the same rules run in browsers.

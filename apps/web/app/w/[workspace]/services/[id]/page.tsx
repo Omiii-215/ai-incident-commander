@@ -1,5 +1,10 @@
 import type { Metadata } from 'next';
+import { idParams } from '@/lib/demo/static-params';
 import { ServiceDetail } from '@/features/service-detail';
+
+export async function generateStaticParams({ params }: { params: { workspace: string } }) {
+  return idParams('services', params.workspace);
+}
 
 export const metadata: Metadata = { title: 'Service' };
 

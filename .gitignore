@@ -21,3 +21,6 @@ coverage/
 # Large or superseded video files (the web version in media/explainer is committed)
 media/explainer/master/
 media/explainer/previous/
+
+# Static showcase demo build
+out-demo/

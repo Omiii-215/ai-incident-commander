@@ -3,7 +3,7 @@
 import type { MeDTO, Role } from '@aic/contracts';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { Logo } from '@/components/logo';
 import { Banner, Button, ErrorState, Skeleton } from '@/components/ui';
 import { api, setCsrfToken } from '@/lib/api';
@@ -19,6 +19,8 @@ function LoginInner() {
   const [pending, setPending] = useState<string | null>(null);
   const [error, setError] = useState<unknown>(null);
 
+  const DEMO = process.env.NEXT_PUBLIC_DEMO === '1';
+  const auto = useRef(false);
   const signIn = async (u: DevUser) => {
     setPending(u.id);
     setError(null);
@@ -36,6 +38,16 @@ function LoginInner() {
     }
   };
 
+  // Showcase links like /demo/login/?as=<userId> sign straight in as that person.
+  useEffect(() => {
+    const as = params.get('as');
+    const target = users.data?.find((u) => u.id === as);
+    if (DEMO && target && !auto.current) {
+      auto.current = true;
+      void signIn(target);
+    }
+  });
+
   return (
     <main id="main" className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6">
       <div className="mb-8 text-xl">
@@ -44,9 +56,15 @@ function LoginInner() {
       <h1 className="page-title">Sign in</h1>
       <p className="prose-width mt-2 text-fg-secondary">AI Incident Commander helps on-call teams investigate incidents with cited evidence and independently reviewed recovery actions.</p>
       <div className="mt-6 space-y-4">
-        <Banner tone="info" title="Local development sign-in">
-          Synthetic identities for the local and CI environments only. Production uses your organization&apos;s identity provider; this adapter refuses to start there.
-        </Banner>
+        {DEMO ? (
+          <Banner tone="info" title="Live demo: pick a person to sign in as">
+            Each person has a different role, so the app shows different things and allows different actions. Everything runs in your browser with sample data; nothing is sent anywhere.
+          </Banner>
+        ) : (
+          <Banner tone="info" title="Local development sign-in">
+            Synthetic identities for the local and CI environments only. Production uses your organization&apos;s identity provider; this adapter refuses to start there.
+          </Banner>
+        )}
         {mode.isLoading && <Skeleton label="Loading sign-in options" />}
         {mode.data?.mode === 'oidc' && <Banner tone="warning" title="Single sign-on is not configured for this deployment." />}
         {users.error ? <ErrorState error={users.error} onRetry={() => void users.refetch()} /> : null}

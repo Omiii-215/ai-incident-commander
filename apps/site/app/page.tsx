@@ -49,6 +49,15 @@ function Section({ id, kicker, title, intro, children }: { id: string; kicker: s
   );
 }
 
+const PEOPLE = [
+  { id: '00000000-0000-4000-8000-000000000002', name: 'Bob', role: 'Commander and responder', ws: 'Acme Shop', tryThis: 'Acknowledge the checkout incident and ask for the AI suggested rollback. Then try to approve it yourself.', tone: 'from-cyan to-indigo' },
+  { id: '00000000-0000-4000-8000-000000000003', name: 'Carol', role: 'Commander', ws: 'Acme Shop', tryThis: "Review and approve Bob's request, then watch the fix run. The Payments request shows how an uncertain result is reconciled.", tone: 'from-indigo to-violet' },
+  { id: '00000000-0000-4000-8000-000000000001', name: 'Alice', role: 'Responder', ws: 'Acme Shop', tryThis: 'Acknowledge incidents, comment, ask for a fresh diagnosis. Approvals and the audit log are off limits.', tone: 'from-sky-400 to-cyan' },
+  { id: '00000000-0000-4000-8000-000000000005', name: 'Erin', role: 'Auditor', ws: 'Acme Shop', tryThis: 'Read the audit log and every approval. Look, but nothing can be changed.', tone: 'from-emerald-400 to-cyan' },
+  { id: '00000000-0000-4000-8000-000000000004', name: 'Dave', role: 'Admin', ws: 'Acme Shop', tryThis: 'Manage plugins: test a connector, narrow its grants or switch it off. Admins cannot approve fixes.', tone: 'from-amber-400 to-pink-500' },
+  { id: '00000000-0000-4000-8000-000000000008', name: 'Gina', role: 'Commander', ws: 'Globex Corp', tryThis: 'A different company in the same app. Gina sees only Globex and cannot open any Acme page.', tone: 'from-pink-500 to-violet' },
+];
+
 const STEPS = [
   {
     title: 'Alerts become one clear incident',
@@ -134,6 +143,7 @@ export default function Home() {
             </span>
           </a>
           <ul className="hidden items-center gap-7 text-sm text-soft md:flex">
+            <li><a className="hover:text-white" href="#demo">Live demo</a></li>
             <li><a className="hover:text-white" href="#video">Video</a></li>
             <li><a className="hover:text-white" href="#how">How it works</a></li>
             <li><a className="hover:text-white" href="#features">Features</a></li>
@@ -167,7 +177,10 @@ export default function Home() {
                   <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
                   Watch the 2 minute video
                 </a>
-                <a href={GITHUB} className="inline-flex min-h-12 items-center rounded-full border border-line bg-white/5 px-6 font-semibold hover:bg-white/10">
+                <a href="#demo" className="inline-flex min-h-12 items-center rounded-full border border-line bg-white/5 px-6 font-semibold hover:bg-white/10">
+                  Try the live demo
+                </a>
+                <a href={GITHUB} className="inline-flex min-h-12 items-center rounded-full px-4 font-semibold text-soft underline-offset-4 hover:text-white hover:underline">
                   View the code
                 </a>
               </div>
@@ -177,6 +190,82 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Live demo */}
+        <Section
+          id="demo"
+          kicker="Try it yourself"
+          title={<>Sign in as anyone. <span className="grad-text">Try every role.</span></>}
+          intro="This is the real dashboard running in your browser with sample data. Pick a person: each role sees different things and can do different things. Nothing you do leaves your browser, and you can reset it any time."
+        >
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {PEOPLE.map((p) => (
+              <li key={p.id} className="glass flex flex-col rounded-2xl p-6">
+                <div className="flex items-center gap-3">
+                  <span aria-hidden="true" className={`inline-flex size-12 items-center justify-center rounded-full bg-gradient-to-br ${p.tone} text-lg font-bold`}>
+                    {p.name[0]}
+                  </span>
+                  <div>
+                    <h3 className="text-lg font-bold">{p.name}</h3>
+                    <p className="text-sm text-[#c7d2fe]">
+                      {p.role} · {p.ws}
+                    </p>
+                  </div>
+                </div>
+                <p className="mt-4 flex-1 leading-relaxed text-soft">{p.tryThis}</p>
+                <a
+                  href={`/demo/login/?as=${p.id}`}
+                  className="mt-5 inline-flex min-h-11 items-center justify-center rounded-full bg-gradient-to-r from-cyan via-indigo to-violet px-5 font-semibold text-white hover:opacity-95"
+                >
+                  Sign in as {p.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <div className="glass mt-10 rounded-2xl p-6 sm:p-8">
+            <h3 className="text-xl font-bold">A two-minute story to try</h3>
+            <ol className="mt-4 grid gap-3 text-soft md:grid-cols-2 lg:grid-cols-5">
+              {[
+                ['Bob', 'Click "Send a test alert" and watch it appear live.'],
+                ['Bob', 'Open the Checkout incident, acknowledge it, and request the rollback.'],
+                ['Bob', 'Try to approve it. The app refuses: someone else must decide.'],
+                ['Carol', 'Use "Switch person", sign in as Carol and approve. Watch it run.'],
+                ['Erin', 'Open the audit log and see every step, including the refusal.'],
+              ].map(([who, step], i) => (
+                <li key={i} className="rounded-xl border border-line p-4">
+                  <span className="text-sm font-bold text-[#a5b4fc]">
+                    {i + 1}. {who}
+                  </span>
+                  <p className="mt-1 text-[0.95rem] leading-relaxed">{step}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <div className="mt-10">
+            <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
+              <p className="text-soft">Or explore it right here:</p>
+              <a href="/demo/" className="font-semibold text-[#c7d2fe] underline underline-offset-4 hover:text-white">
+                Open the demo full screen
+              </a>
+            </div>
+            <div className="frame">
+              <div className="frame-bar" aria-hidden="true">
+                <i style={{ background: '#f87171' }} />
+                <i style={{ background: '#fbbf24' }} />
+                <i style={{ background: '#34d399' }} />
+                <span className="ml-3 truncate text-xs text-soft">AI Incident Commander · live demo</span>
+              </div>
+              <iframe
+                src="/demo/"
+                title="Interactive demo of the AI Incident Commander dashboard"
+                loading="lazy"
+                className="block h-[640px] w-full bg-white sm:h-[760px] lg:h-[820px]"
+              />
+            </div>
+          </div>
+        </Section>
 
         {/* Video */}
         <Section id="video" kicker="See it in action" title={<>A 2 minute tour, <span className="grad-text">start to finish</span></>} intro="Real footage of the app: an alert arrives, the AI explains it with proof, one person asks for a fix and another approves it.">

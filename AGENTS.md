@@ -84,6 +84,7 @@ Verified scripts from the root `package.json` (pnpm 12.8.1; run via `npx pnpm@12
 | `pnpm typecheck` | Strict TypeScript across all projects | Passes |
 | `pnpm test:unit` / `pnpm test:integration` / `pnpm test` | Domain, transactional, API and SSE tests (in-memory replica set) | Pass |
 | `pnpm build` | Production web build | Passes |
+| `pnpm demo:capture` / `pnpm build:site` / `pnpm test:demo` | Public demo snapshot, static site build, demo end-to-end checks | Work; demo backend lives in `apps/web/lib/demo` |
 | `pnpm lint`, `pnpm test:e2e`, `pnpm test:ai` | Proposed | Not implemented yet |
 
 Do not install packages merely to make a documentation-only task appear tested. For Markdown changes, check local links, fenced blocks, Mermaid syntax, domain consistency and whether all claimed files exist.

@@ -33,7 +33,11 @@ async function request<T>(method: string, path: string, init: { body?: unknown; 
   if (method !== 'GET' && csrfToken) headers['X-CSRF-Token'] = csrfToken;
   let res: Response;
   try {
-    res = await fetch(`/api/v1${path}`, {
+    if (process.env.NEXT_PUBLIC_DEMO === '1') {
+      // Public showcase build: the API runs in the browser on recorded sample data.
+      const { demoFetch } = await import('./demo/server');
+      res = await demoFetch(method, path, { ...(init.raw !== undefined ? { body: init.raw as Blob } : init.body !== undefined ? { body: JSON.stringify(init.body) } : {}), headers });
+    } else res = await fetch(`/api/v1${path}`, {
       method,
       headers,
       body: init.raw ?? (init.body !== undefined ? JSON.stringify(init.body) : undefined),

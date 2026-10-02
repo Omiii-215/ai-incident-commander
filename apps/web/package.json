@@ -7,14 +7,16 @@
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start --port 3000",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build:demo": "NEXT_PUBLIC_DEMO=1 next build"
   },
   "dependencies": {
     "@aic/contracts": "workspace:*",
     "@tanstack/react-query": "5.104.1",
     "next": "16.3.8",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "@aic/domain": "workspace:*"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.3",

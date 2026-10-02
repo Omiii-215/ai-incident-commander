@@ -1,4 +1,4 @@
-import { hashCanonical } from './canonical.js';
+import { hashCanonical } from './canonical';
 
 // Stable correlation fingerprint (LLD.md §5). Volatile values (measurements,
 // receipt time, instance identifiers) are excluded unless the source mapping

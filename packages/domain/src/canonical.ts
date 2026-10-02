@@ -1,4 +1,4 @@
-import { createHash } from 'node:crypto';
+import { sha256Hex } from './sha256';
 
 // Deterministic JSON canonicalization (DATA_MODEL.md §5): sorted object keys,
 // arrays preserved, undefined/NaN/Infinity forbidden, dates normalized to ISO.
@@ -35,6 +35,6 @@ function serialize(value: unknown, path: string): string {
   }
 }
 
-export const sha256Hex = (input: string | Uint8Array) => createHash('sha256').update(input).digest('hex');
+export { sha256Hex };
 
 export const hashCanonical = (value: unknown) => `sha256:${sha256Hex(canonicalJson(value))}`;

@@ -9,10 +9,10 @@
 
 An open-source incident response workspace. The AI gathers the evidence and suggests a fix **with proof**; a second person approves it; every step is on the record.
 
-[**Live site**](https://ai-incident-commander-app.vercel.app) · [**Watch the 2 minute video**](https://ai-incident-commander-app.vercel.app/#video) · [Run it locally](#run-it-locally) · [Docs](#documentation)
+[**Try the live demo**](https://ai-incident-commander-app.vercel.app/#demo) · [**Watch the 2 minute video**](https://ai-incident-commander-app.vercel.app/#video) · [Live site](https://ai-incident-commander-app.vercel.app) · [Run it locally](#run-it-locally) · [Docs](#documentation)
 
 ![Status](https://img.shields.io/badge/status-MVP%20(simulator)-6366f1)
-![Tests](https://img.shields.io/badge/tests-77%20passing-22c55e)
+![Tests](https://img.shields.io/badge/tests-78%20passing-22c55e)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)
 ![Next.js](https://img.shields.io/badge/Next.js-16-000?logo=nextdotjs)
 ![MongoDB](https://img.shields.io/badge/MongoDB-8-47a248?logo=mongodb&logoColor=white)
@@ -27,6 +27,21 @@ An open-source incident response workspace. The AI gathers the evidence and sugg
 </div>
 
 ---
+
+## Try the live demo
+
+Open **[the live demo](https://ai-incident-commander-app.vercel.app/#demo)** and sign in as any of the sample people. It is the real dashboard, running entirely in your browser on sample data, so nothing you do is sent anywhere and you can reset it at any time.
+
+| Sign in as | Role | Try this |
+| --- | --- | --- |
+| [Bob](https://ai-incident-commander-app.vercel.app/demo/login/?as=00000000-0000-4000-8000-000000000002) | Commander and responder | Acknowledge the checkout incident, request the AI suggested rollback, then try to approve it yourself |
+| [Carol](https://ai-incident-commander-app.vercel.app/demo/login/?as=00000000-0000-4000-8000-000000000003) | Commander | Approve Bob's request and watch it run; the Payments request shows an uncertain result being reconciled |
+| [Alice](https://ai-incident-commander-app.vercel.app/demo/login/?as=00000000-0000-4000-8000-000000000001) | Responder | Acknowledge, comment and request a diagnosis; approvals and audit are off limits |
+| [Erin](https://ai-incident-commander-app.vercel.app/demo/login/?as=00000000-0000-4000-8000-000000000005) | Auditor | Read the audit log and every approval, without being able to change anything |
+| [Dave](https://ai-incident-commander-app.vercel.app/demo/login/?as=00000000-0000-4000-8000-000000000004) | Admin | Test, narrow or switch off plugins; admins cannot approve fixes |
+| [Gina](https://ai-incident-commander-app.vercel.app/demo/login/?as=00000000-0000-4000-8000-000000000008) | Commander, other company | Sees only Globex Corp and cannot open any Acme page |
+
+Use **Send a test alert** in the demo banner to watch a new incident arrive live, and **Switch person** to continue the story as someone else.
 
 ## Why it exists
 
@@ -113,9 +128,9 @@ flowchart LR
 | Worker | **Node worker process** | Runs investigations, approved actions, reconciliation, runbook indexing and postmortems. |
 | AI | **Provider adapters + bounded workflow** | Swappable models behind one interface. The demo uses a deterministic test model; real providers plug in later. |
 | Tools | **Policy gateway + plugin manifests (`ic.plugin/v1`)** | Every tool call must pass workspace, plugin, scope, target and approval checks. |
-| Testing | **Vitest + mongodb-memory-server + Supertest** | 33 unit and 44 integration tests against a real replica set. |
+| Testing | **Vitest + mongodb-memory-server + Supertest, Puppeteer** | 34 unit and 44 integration tests against a real replica set, plus 19 end-to-end checks of the public demo. |
 | Monorepo | **pnpm workspaces** | `apps/` for runnable programs, `packages/` for shared code. |
-| Showcase site | **Next.js static export on Vercel** | The public product page in `apps/site`. |
+| Showcase site | **Next.js static export on Vercel** | The public product page in `apps/site`, with the live demo at `/demo`. |
 | Video | **Puppeteer, ffmpeg, Gnani Vachana TTS** | Records real app footage, animates it and adds the narration. |
 
 ## Architecture
@@ -205,6 +220,9 @@ npx pnpm@12.8.1 send-alert checkout http_error_rate sev2 "5xx spike"
 | `pnpm typecheck` | Strict TypeScript across every package |
 | `pnpm test` | Unit and integration tests (in-memory replica set) |
 | `pnpm build` | Production build of the dashboard |
+| `pnpm demo:capture` | Record a fresh sample-data snapshot for the public demo (needs the local app running) |
+| `pnpm build:site` | Build the static demo dashboard and the showcase site |
+| `pnpm test:demo` | 19 end-to-end checks of the public demo across every role (`BASE=<url>` to test a deployment) |
 
 ## Testing
 
@@ -246,13 +264,19 @@ This is the **M0 and M1 MVP**: the full workflow works end to end against a **de
 
 [`media/explainer`](media/explainer) holds the 2:19 video, its subtitles ([SRT](media/explainer/captions.srt), [WebVTT](media/explainer/captions.vtt)), the [narration script](media/explainer/SCRIPT.md) and the [scripts](media/explainer/source) that made it: Puppeteer records real footage of the running app, an HTML stage animates it frame by frame, ffmpeg assembles it, and Gnani Vachana TTS provides the voice (your own key goes in an ignored `.gnani.env` file).
 
-## Showcase site
+## Showcase site and live demo
 
-The public page lives in [`apps/site`](apps/site) and is a static Next.js export.
+The public page lives in [`apps/site`](apps/site) and is a static Next.js export. Its live demo at `/demo` is **the real dashboard** (`apps/web`) built as static files with `NEXT_PUBLIC_DEMO=1`. In that build, API calls go to a small in-browser backend ([`apps/web/lib/demo`](apps/web/lib/demo)) instead of the network:
+
+- data comes from a snapshot of the real API with sample data (`pnpm demo:capture`), re-anchored to the visitor's current time;
+- permissions, the incident lifecycle, approval binding and dispatch checks reuse the same rules package as the server ([`packages/domain`](packages/domain)), so the demo refuses exactly what the real app refuses;
+- live updates, simulated execution, reconciliation and expiry are driven in the browser, and state lasts for the browser tab.
+
+The demo is not a hosted backend: there is no database, sign-in or network call behind it.
 
 ```bash
+npx pnpm@12.8.1 build:site                      # builds the demo dashboard, then the site into apps/site/out
 cd apps/site
-npm run build                                   # copies screenshots, logo and video in, writes out/
 mkdir -p .vercel/output && cp -R out .vercel/output/static && echo '{"version":3}' > .vercel/output/config.json
 vercel deploy --prebuilt --prod                 # publishes the static files
 ```
